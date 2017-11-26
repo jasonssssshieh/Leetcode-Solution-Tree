@@ -1,0 +1,50 @@
+//
+//  main.cpp
+//  binary index tree
+//
+//  Copyright © 2017 Jason Xie. All rights reserved.
+//
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int last_bit_set(int number){
+    return number & (-number);
+}
+
+int Sum(vector<int>& bit, int idx){
+    int res = 0;
+    while(idx){
+        res += bit[idx];
+        idx -= last_bit_set(idx);
+    }
+    return res;
+}
+
+void Add(vector<int>& bit, int pos, int val){
+    while(pos < bit.size()){
+        bit[pos] += val;
+        pos += last_bit_set(pos);
+    }
+}
+
+vector<int> constructBIT(vector<int>& nums){
+    vector<int> bit(nums.size()+1, 0);
+    for(int i = 0; i < nums.size(); ++i){
+        Add(bit, i+1, nums[i]);
+    }
+    return bit;
+}
+
+int RangeSum(vector<int>& bit, int from, int to){
+    return Sum(bit, to) - Sum(bit, from - 1);
+}
+int main(int argc, const char * argv[]) {
+    // insert code here...
+    vector<int> test = {1,2,3,4,5,6,7,8,10,11,12,13,14,15};
+    auto bit = constructBIT(test);
+    int from = 1, to = 5;
+    cout<<"The sume from the "<< from <<"th element to the "<<to<<"th element is: "<<RangeSum(bit, from, to)<<endl;
+    return 0;
+}
